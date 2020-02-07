@@ -1,5 +1,6 @@
 package app.window;
 
+import app.representation.BinaryImage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,6 +17,9 @@ public class RgbSegmentationWindow {
 
     private Image inputImage;
     private ImageView inputImageView;
+
+    private Image mapImage;
+    private ImageView mapImageView;
 
     public RgbSegmentationWindow(Image inputImage) {
         this.inputImage = inputImage;
@@ -39,8 +43,10 @@ public class RgbSegmentationWindow {
 
     private HBox buildPreviewPanel() {
         inputImageView = new ImageView(inputImage);
+        mapImage = BinaryImage.black(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
+        mapImageView = new ImageView(mapImage);
 
-        HBox panel = new HBox(inputImageView);
+        HBox panel = new HBox(inputImageView, mapImageView);
         panel.setPadding(new Insets(16, 0, 16, 0));
         panel.setAlignment(Pos.CENTER);
         panel.setSpacing(16);

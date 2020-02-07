@@ -1,6 +1,6 @@
 package app.representation;
 
-class Canals {
+public class Canals {
     final int red;
     final int green;
     final int blue;
@@ -9,5 +9,17 @@ class Canals {
         this.red = red;
         this.green = green;
         this.blue = blue;
+    }
+
+    public int red() {
+        return red;
+    }
+
+    public int green() {
+        return green;
+    }
+
+    public int blue() {
+        return blue;
     }
 }
