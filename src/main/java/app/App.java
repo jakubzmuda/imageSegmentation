@@ -1,6 +1,7 @@
 package app;
 
 import app.exception.FileOpenException;
+import app.window.RgbSegmentationWindow;
 import com.sun.media.jai.codec.FileSeekableStream;
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
@@ -140,7 +141,7 @@ public class App extends Application {
         MenuItem rgbSegmentationItem = new MenuItem("Model RGB");
 
         rgbSegmentationItem.setOnAction(t -> {
-
+            new RgbSegmentationWindow().show();
         });
         return rgbSegmentationItem;
     }
