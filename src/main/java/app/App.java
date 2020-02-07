@@ -35,8 +35,8 @@ import java.io.IOException;
 
 public class App extends Application {
 
-    private static int appWidth = 1200;
-    private static int appHeight = 900;
+    private static int appWidth = 600;
+    private static int appHeight = 300;
     private static long imageContainerWidth = Math.round(appWidth);
 
     private Image image;
@@ -118,10 +118,10 @@ public class App extends Application {
         MenuItem openImageItem = new MenuItem("Otwórz");
 
         openImageItem.setOnAction(t -> {
-            FileChooser fileChooser = new FileChooser(); //nocommit
-            File file = fileChooser.showOpenDialog(null);
-//            ClassLoader classLoader = getClass().getClassLoader(); // fast load
-//            File file = new File(classLoader.getResource("blackAndWhite.bmp").getFile());
+//            FileChooser fileChooser = new FileChooser(); //nocommit
+//            File file = fileChooser.showOpenDialog(null);
+            ClassLoader classLoader = getClass().getClassLoader(); // fast load
+            File file = new File(classLoader.getResource("img/1.tif").getFile());
             try {
                 String extension = FilenameUtils.getExtension(file.getName());
                 if ("tif".equals(extension.toLowerCase())) {
@@ -141,7 +141,7 @@ public class App extends Application {
         MenuItem rgbSegmentationItem = new MenuItem("Model RGB");
 
         rgbSegmentationItem.setOnAction(t -> {
-            new RgbSegmentationWindow().show();
+            new RgbSegmentationWindow(image).show();
         });
         return rgbSegmentationItem;
     }
