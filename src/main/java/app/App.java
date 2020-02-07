@@ -1,5 +1,10 @@
 package app;
 
+import app.exception.FileOpenException;
+import com.sun.media.jai.codec.FileSeekableStream;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageDecoder;
+import com.sun.media.jai.codec.SeekableStream;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -17,10 +22,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
+import javax.media.jai.PlanarImage;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 
@@ -107,15 +116,50 @@ public class App extends Application {
             File file = fileChooser.showOpenDialog(null);
 //            ClassLoader classLoader = getClass().getClassLoader(); // fast load
 //            File file = new File(classLoader.getResource("blackAndWhite.bmp").getFile());
-
             try {
-                BufferedImage bufferedImage = ImageIO.read(file);
-                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-                updateImage(image);
+                String extension = FilenameUtils.getExtension(file.getName());
+                if ("tif".equals(extension.toLowerCase())) {
+                    updateImage(openTif(file));
+                } else {
+                    BufferedImage bufferedImage = ImageIO.read(file);
+                    Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                    updateImage(image);
+                }
             } catch (IOException ignored) {
             }
         });
         return openImageItem;
+    }
+
+    /**
+     * Otwiera plik z rozszerzeniem tif.
+     *
+     * @param file plik do otwarcia
+     * @return zwraca obiekt reprezentujący obraz.
+     * @throws IOException       jeśli wystąpi problem z wczytaniem pliku
+     * @throws FileOpenException jeśli wystąpi problem z otwarciem pliku
+     */
+    private Image openTif(File file) throws IOException, FileOpenException {
+        Image image;
+        SeekableStream stream = new FileSeekableStream(file);
+        String[] names = ImageCodec.getDecoderNames(stream);
+        ImageDecoder dec = ImageCodec.createImageDecoder(names[0], stream, null);
+        if (dec == null) {
+            throw new FileOpenException();
+        }
+
+        RenderedImage im = dec.decodeAsRenderedImage();
+        if (im == null) {
+            throw new FileOpenException();
+        }
+
+        BufferedImage bufferedImage = PlanarImage.wrapRenderedImage(im).getAsBufferedImage();
+        if (bufferedImage == null) {
+            throw new FileOpenException();
+        }
+
+        image = SwingFXUtils.toFXImage(bufferedImage, null);
+        return image;
     }
 
     public static void main(String[] args) {
