@@ -14,9 +14,6 @@ import javafx.stage.Stage;
 
 public class RgbSegmentationWindow {
 
-    private int imageWidth = 200;
-    private int imageHeight = 200;
-
     private Image inputImage;
     private ImageView inputImageView;
 
