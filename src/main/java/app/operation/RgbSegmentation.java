@@ -32,4 +32,18 @@ public class RgbSegmentation {
     public Image map() {
         return new ImageConverter().toImage(map);
     }
+
+    public Image result() {
+        ImageConverter converter = new ImageConverter();
+        ImageMap map = converter.toImageMap(inputImage);
+
+        map.singlePointOperation((x, y, canals) -> {
+            if (this.map.get(x, y).red() == 255) {
+                return canals;
+            }
+            return new Canals(0, 0, 0);
+        });
+
+        return converter.toImage(map);
+    }
 }

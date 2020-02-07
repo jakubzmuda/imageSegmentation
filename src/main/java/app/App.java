@@ -21,7 +21,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 
@@ -141,7 +140,7 @@ public class App extends Application {
         MenuItem rgbSegmentationItem = new MenuItem("Model RGB");
 
         rgbSegmentationItem.setOnAction(t -> {
-            new RgbSegmentationWindow(image).show();
+            new RgbSegmentationWindow(this, image).show();
         });
         return rgbSegmentationItem;
     }

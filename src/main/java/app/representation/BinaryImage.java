@@ -11,11 +11,11 @@ public class BinaryImage {
         this.imageMap = imageMap;
     }
 
-    public static BinaryImage black(long width, long height) {
+    public static BinaryImage white (long width, long height) {
         ImageMap rawMap = new ImageMap();
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                rawMap.put(i, j, new Canals(0, 0, 0));
+                rawMap.put(i, j, new Canals(255, 255, 255));
             }
         }
 

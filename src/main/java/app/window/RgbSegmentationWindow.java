@@ -1,5 +1,6 @@
 package app.window;
 
+import app.App;
 import app.operation.RgbSegmentation;
 import app.representation.BinaryImage;
 import app.representation.Canals;
@@ -15,15 +16,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import sun.util.resources.cldr.st.CurrencyNames_st_LS;
 
 public class RgbSegmentationWindow {
+
+    private App app;
+
+    private Stage stage;
 
     private Image inputImage;
     private ImageView inputImageView;
 
     private Image mapImage;
     private ImageView mapImageView;
+
+    private Image resultImage;
+    private ImageView resultImageView;
 
     private TextField redMinField;
     private TextField redMaxField;
@@ -35,19 +42,20 @@ public class RgbSegmentationWindow {
     private TextField blueMaxField;
 
 
-    public RgbSegmentationWindow(Image inputImage) {
+    public RgbSegmentationWindow(App app, Image inputImage) {
+        this.app = app;
         this.inputImage = inputImage;
-
     }
 
     public void show() {
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.setTitle("Segmentacja w modelu RGB");
 
         GridPane configurationPanel = buildConfigurationPanel();
         HBox previewPanel = buildPreviewPanel();
+        HBox actionsPanel = buildActionsPanel();
 
-        VBox container = new VBox(configurationPanel, previewPanel);
+        VBox container = new VBox(configurationPanel, previewPanel, actionsPanel);
         container.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(container, 800, 400);
@@ -55,24 +63,58 @@ public class RgbSegmentationWindow {
         stage.show();
     }
 
+    private HBox buildActionsPanel() {
+        Button previewButton = new Button("Podgląd");
+        previewButton.setOnAction((event) -> {
+            RgbSegmentation rgbSegmentation = new RgbSegmentation(inputImage, thresholdFrom(), thresholdTo());
+            Image map = rgbSegmentation.map();
+            Image result = rgbSegmentation.result();
+            updateMap(map);
+            updateResultImage(result);
+        });
+
+        Button cancelButton = new Button("Anuluj");
+        cancelButton.setOnAction((event) -> {
+            stage.close();
+        });
+
+        Button applyButton = new Button("Potwierdź");
+        applyButton.setOnAction((event) -> {
+           app.updateImage(resultImage);
+           stage.close();
+        });
+
+        HBox container = new HBox(previewButton, cancelButton, applyButton);
+        container.setAlignment(Pos.CENTER);
+        container.setSpacing(16);
+        return container;
+    }
+
     public void updateMap(Image newImage) {
         mapImage = newImage;
         mapImageView.setImage(mapImage);
     }
 
+    public void updateResultImage(Image newImage) {
+        resultImage = newImage;
+        resultImageView.setImage(resultImage);
+    }
 
     private HBox buildPreviewPanel() {
         inputImageView = new ImageView(inputImage);
-        mapImage = BinaryImage.black(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
+
+        mapImage = BinaryImage.white(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
         mapImageView = new ImageView(mapImage);
 
-        HBox panel = new HBox(inputImageView, mapImageView);
+        resultImage = inputImage;
+        resultImageView = new ImageView(resultImage);
+
+        HBox panel = new HBox(inputImageView, mapImageView, resultImageView);
         panel.setPadding(new Insets(16, 0, 16, 0));
         panel.setAlignment(Pos.CENTER);
         panel.setSpacing(16);
         return panel;
     }
-
 
     private GridPane buildConfigurationPanel() {
         GridPane container = new GridPane();
@@ -101,19 +143,9 @@ public class RgbSegmentationWindow {
         container.add(blueMinField, 1, 3);
         container.add(blueMaxField, 2, 3);
 
-        Button doIt = new Button("Podgląd");
-        doIt.setOnAction((event) -> {
-            Image map = new RgbSegmentation(inputImage, thresholdFrom(), thresholdTo()).map();
-            updateMap(map);
-//            Image newImage = new ImageOperations().threshold(image, Integer.parseInt(redMinField.getText()), Integer.parseInt(minField.getText()), Integer.parseInt(maxField.getText()));
-//            updateImage(newImage);
-//            stage.close();
-        });
-
         container.setAlignment(Pos.CENTER);
         container.setHgap(8);
         container.setVgap(8);
-        container.add(doIt, 1, 4);
 
         return container;
     }
