@@ -29,7 +29,6 @@ import javax.media.jai.PlanarImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 
@@ -41,7 +40,6 @@ public class App extends Application {
 
     private Image image;
     private ImageView imageView;
-    private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) {
@@ -50,7 +48,6 @@ public class App extends Application {
         primaryStage.setScene(new Scene(vBox, appWidth, appHeight));
         primaryStage.setResizable(false);
         primaryStage.show();
-        this.primaryStage = primaryStage;
     }
 
     private VBox buildMainBox() {
@@ -82,8 +79,9 @@ public class App extends Application {
 
     private MenuBar buildMenuBox(ImageView imageView) {
         Menu fileMenu = buildFileMenuTab(imageView);
+        Menu segmentationMenu = buildSegmentationMenu();
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(fileMenu);
+        menuBar.getMenus().addAll(fileMenu, segmentationMenu);
         return menuBar;
     }
 
@@ -97,6 +95,13 @@ public class App extends Application {
         MenuItem closeItem = buildCloseAppMenuItem();
         Menu menu = new Menu("Plik");
         menu.getItems().addAll(openImageItem, closeItem);
+        return menu;
+    }
+
+    private Menu buildSegmentationMenu() {
+        MenuItem segmentationItem = buildRgbSegmentationMenuItem(imageView);
+        Menu menu = new Menu("Segmentacja");
+        menu.getItems().addAll(segmentationItem);
         return menu;
     }
 
@@ -130,6 +135,16 @@ public class App extends Application {
         });
         return openImageItem;
     }
+
+    private MenuItem buildRgbSegmentationMenuItem(ImageView imageView) {
+        MenuItem rgbSegmentationItem = new MenuItem("Model RGB");
+
+        rgbSegmentationItem.setOnAction(t -> {
+
+        });
+        return rgbSegmentationItem;
+    }
+
 
     /**
      * Otwiera plik z rozszerzeniem tif.
