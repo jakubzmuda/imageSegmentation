@@ -122,17 +122,29 @@ public class RgbSegmentationWindow {
 
     private HBox buildPreviewPanel() {
         inputImageView = new ImageView(inputImage);
+        VBox inputBox = new VBox(new Label("Obraz wejściowy"), inputImageView);
+        inputBox.setSpacing(8);
+        inputBox.setAlignment(Pos.CENTER);
 
         mapImage = BinaryImage.white(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
         mapImageView = new ImageView(mapImage);
+        VBox mapBox = new VBox(new Label("Mapa obrazu"), mapImageView);
+        mapBox.setSpacing(8);
+        mapBox.setAlignment(Pos.CENTER);
 
         markersImage = BinaryImage.white(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
         markersImageView = new ImageView(markersImage);
+        VBox markersBox = new VBox(new Label("Segmenty"), markersImageView);
+        markersBox.setSpacing(8);
+        markersBox.setAlignment(Pos.CENTER);
 
         resultImage = inputImage;
         resultImageView = new ImageView(resultImage);
+        VBox resultBox = new VBox(new Label("Obraz wynikowy"), resultImageView);
+        resultBox.setSpacing(8);
+        resultBox.setAlignment(Pos.CENTER);
 
-        HBox panel = new HBox(inputImageView, mapImageView, markersImageView, resultImageView);
+        HBox panel = new HBox(inputBox, mapBox, markersBox, resultBox);
         panel.setPadding(new Insets(16, 0, 16, 0));
         panel.setAlignment(Pos.CENTER);
         panel.setSpacing(16);
