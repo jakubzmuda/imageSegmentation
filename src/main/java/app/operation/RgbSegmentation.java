@@ -1,5 +1,6 @@
 package app.operation;
 
+import app.representation.BinaryImage;
 import app.representation.Canals;
 import app.representation.ImageMap;
 import app.util.ImageConverter;
@@ -8,6 +9,7 @@ import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RgbSegmentation {
     private Image inputImage;
@@ -59,6 +61,20 @@ public class RgbSegmentation {
         }
 
         System.out.println("Number of groups = " + groups.size());
+
+        ImageMap markersMap = new ImageConverter().toImageMap(BinaryImage.black(binaryMap.width(), binaryMap.height()).asImage());
+
+        for (List<Tuple2<Integer, Integer>> group : groups) {
+            for (Tuple2<Integer, Integer> point : group) {
+                int red = new Random().nextInt(255);
+                int green = new Random().nextInt(255);
+                int blue = new Random().nextInt(255);
+                Canals canals = new Canals(red, green, blue);
+                markersMap.put(point._1, point._2, canals);
+            }
+        }
+
+        this.markers = markersMap;
     }
 
     private boolean fitsInRange(Canals canals, Canals from, Canals to) {
@@ -72,7 +88,7 @@ public class RgbSegmentation {
     }
 
     public Image markers() {
-        return new ImageConverter().toImage(map); // TODO fixme
+        return new ImageConverter().toImage(markers);
     }
 
     public Image result() {
