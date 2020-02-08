@@ -29,56 +29,36 @@ public class ImageMap {
         map.put(x, innerMap);
     }
 
+    /**
+     * Pobranie wartości RGB danego piksela
+     * @param x współrzędna x
+     * @param y współrzędna y
+     * @return wartość RGB
+     */
     public Canals get(int x, int y) {
         return map.get(x).get(y);
     }
 
-    public int getGray(int x, int y) {
-        return map.get(x).get(y).red;
-    }
-
-    public Canals maxColorCanalValues() {
-        Canals currentBiggest = new Canals(0, 0, 0);
-        for (Map.Entry<Integer, Map<Integer, Canals>> e : map.entrySet()) {
-            Integer x = e.getKey();
-            Map<Integer, Canals> value = e.getValue();
-            for (Map.Entry<Integer, Canals> entry : value.entrySet()) {
-                Integer y = entry.getKey();
-                Canals canals = entry.getValue();
-                currentBiggest = new Canals(
-                        Math.max(canals.red, currentBiggest.red),
-                        Math.max(canals.green, currentBiggest.green),
-                        Math.max(canals.blue, currentBiggest.blue));
-            }
-        }
-        return currentBiggest;
-    }
-
-    public Canals minColorValues() {
-        Canals currentLowest = new Canals(255, 255, 255);
-        for (Map.Entry<Integer, Map<Integer, Canals>> e : map.entrySet()) {
-            Integer x = e.getKey();
-            Map<Integer, Canals> value = e.getValue();
-            for (Map.Entry<Integer, Canals> entry : value.entrySet()) {
-                Integer y = entry.getKey();
-                Canals canals = entry.getValue();
-                currentLowest = new Canals(
-                        Math.min(canals.red, currentLowest.red),
-                        Math.min(canals.green, currentLowest.green),
-                        Math.min(canals.blue, currentLowest.blue));
-            }
-        }
-        return currentLowest;
-    }
-
+    /**
+     * Pobiera wysokość obrazu
+     * @return wysokość
+     */
     public int height() {
         return map.get(0).size();
     }
 
+    /**
+     * Pobiera szerokość obrazu
+     * @return szerokość
+     */
     public int width() {
         return map.size();
     }
 
+    /**
+     * Operacja jednopunktowa na obrazie
+     * @param operator funkcja operacji
+     */
     public void singlePointOperation(Function3<Integer, Integer, Canals, Canals> operator) {
         map.forEach((x, value) -> {
             value.forEach((y, canals) -> {
@@ -87,6 +67,12 @@ public class ImageMap {
         });
     }
 
+    /**
+     * Pobranie wartości RGB piksela, lub czerń dla pikseli sąsiadujących z krawędzią obrazu
+     * @param x współrzędna x
+     * @param y współrzędna y
+     * @return wartość RGB
+     */
     public Canals getCanalValueOrBlack(int x, int y) {
         if (x < 0 || x >= width() || y < 0 || y >= height()) {
             return new Canals(0, 0, 0);
