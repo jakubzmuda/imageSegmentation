@@ -12,16 +12,23 @@ import java.util.List;
 import java.util.Random;
 
 public class RgbSegmentation {
+
+    /**
+     * Minimalna akceptowalna wielkość grupy (segmentu)
+     */
+    private final int minimalGroupSize = 10;
+
     private Image inputImage;
     private ImageMap map;
     private ImageMap markers;
-    private int numberOfGroups = 0;
+    private long numberOfGroups = 0;
 
     /**
      * Tworzy instancję klasy RgbSegmentation. Jest to klasa bezstanowa i od razu dokonuje obliczeń.
-     * @param image wejściowy obraz
-     * @param from dolny zakres kolorów
-     * @param to górny zakres kolorów
+     *
+     * @param image       wejściowy obraz
+     * @param from        dolny zakres kolorów
+     * @param to          górny zakres kolorów
      * @param shouldGroup przełącznik mówiący o tym czy należy dokonać segmentacji
      */
     public RgbSegmentation(Image image, Canals from, Canals to, boolean shouldGroup) {
@@ -37,10 +44,9 @@ public class RgbSegmentation {
 
         this.map = binaryMap;
 
-        if(shouldGroup) {
+        if (shouldGroup) {
             this.prepareMarkers(binaryMap);
-        }
-        else {
+        } else {
             this.markers = binaryMap;
         }
     }
@@ -80,17 +86,19 @@ public class RgbSegmentation {
             }
         }
 
-        this.numberOfGroups = groups.size();
+        this.numberOfGroups = groups.stream().filter(group -> group.size() >= minimalGroupSize).count();
 
         ImageMap markersMap = new ImageConverter().toImageMap(BinaryImage.black(binaryMap.width(), binaryMap.height()).asImage());
 
         for (List<Tuple2<Integer, Integer>> group : groups) {
-            int red = new Random().nextInt(255);
-            int green = new Random().nextInt(255);
-            int blue = new Random().nextInt(255);
-            for (Tuple2<Integer, Integer> point : group) {
-                Canals canals = new Canals(red, green, blue);
-                markersMap.put(point._1, point._2, canals);
+            if (group.size() >= minimalGroupSize) {
+                int red = new Random().nextInt(255);
+                int green = new Random().nextInt(255);
+                int blue = new Random().nextInt(255);
+                for (Tuple2<Integer, Integer> point : group) {
+                    Canals canals = new Canals(red, green, blue);
+                    markersMap.put(point._1, point._2, canals);
+                }
             }
         }
 
@@ -99,9 +107,10 @@ public class RgbSegmentation {
 
     /**
      * Metoda sprawdzająca czy dany zakres kolorów mieści się w przedziale
+     *
      * @param canals sprawdzany zakres kolorów
-     * @param from dolny przedział kolorów
-     * @param to górny przedział kolorów
+     * @param from   dolny przedział kolorów
+     * @param to     górny przedział kolorów
      * @return wynik sprawdzenia
      */
     private boolean fitsInRange(Canals canals, Canals from, Canals to) {
@@ -112,6 +121,7 @@ public class RgbSegmentation {
 
     /**
      * Akcesor reprezentacji graficznej binarnej mapy
+     *
      * @return obraz
      */
     public Image map() {
@@ -120,6 +130,7 @@ public class RgbSegmentation {
 
     /**
      * Akcesor reprezentacji graficznej markerów
+     *
      * @return obraz
      */
     public Image markers() {
@@ -128,6 +139,7 @@ public class RgbSegmentation {
 
     /**
      * Zwraca obraz wyjściowy z nałożoną mapą binarną obrazu
+     *
      * @return obraz
      */
     public Image result() {
@@ -146,6 +158,7 @@ public class RgbSegmentation {
 
     /**
      * Zamienia pojedyńcze punkty w grupy (segmenty) o wielkości jeden.
+     *
      * @param availablePoints wszystkie punkty
      * @return wszystkie grupy
      */
@@ -162,6 +175,7 @@ public class RgbSegmentation {
 
     /**
      * Dla danej mapy binarnej obrazu, sprawdza które punkty są zapalone i zbiera je
+     *
      * @param binaryImage mapa binarna obrazu
      * @return lista zapalonych punktów
      */
@@ -180,7 +194,8 @@ public class RgbSegmentation {
 
     /**
      * Dla danego punktu zbiera z mapy binarnej obrazu punkty sąsiednie, jeśli są zapalone
-     * @param point punkt sprawdzenia
+     *
+     * @param point     punkt sprawdzenia
      * @param binaryMap mapa binarna obrazu
      * @return lista zapalonych punktów sąsiednich
      */
@@ -203,9 +218,10 @@ public class RgbSegmentation {
 
     /**
      * Akcesor liczby grup (segmentów)
+     *
      * @return liczba grup (segmentów)
      */
-    public int numberOfGroups() {
+    public long numberOfGroups() {
         return this.numberOfGroups;
     }
 }
