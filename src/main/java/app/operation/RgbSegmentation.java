@@ -17,6 +17,13 @@ public class RgbSegmentation {
     private ImageMap markers;
     private int numberOfGroups = 0;
 
+    /**
+     * Tworzy instancję klasy RgbSegmentation. Jest to klasa bezstanowa i od razu dokonuje obliczeń.
+     * @param image wejściowy obraz
+     * @param from dolny zakres kolorów
+     * @param to górny zakres kolorów
+     * @param shouldGroup przełącznik mówiący o tym czy należy dokonać segmentacji
+     */
     public RgbSegmentation(Image image, Canals from, Canals to, boolean shouldGroup) {
         this.inputImage = image;
 
@@ -38,6 +45,15 @@ public class RgbSegmentation {
         }
     }
 
+    /**
+     * Przygotowuje markery ze względu na daną mapę binarną
+     * Opis działania:
+     * Stwórz tyle grup, ile jest jasnych punktów w mapie binarnej
+     * dla każdego punktu spójrz na sąsiedztwo i zobacz czy dany punkt już znajduje się w tej grupie.
+     * Jeśli tak, pomin, jeśli nie, dołącz całą grupę.
+     *
+     * @param binaryMap mapa binarna obrazu po progowaniu
+     */
     private void prepareMarkers(ImageMap binaryMap) {
         List<Tuple2<Integer, Integer>> availablePoints = availableMarkerPoints(binaryMap);
 
@@ -81,20 +97,39 @@ public class RgbSegmentation {
         this.markers = markersMap;
     }
 
+    /**
+     * Metoda sprawdzająca czy dany zakres kolorów mieści się w przedziale
+     * @param canals sprawdzany zakres kolorów
+     * @param from dolny przedział kolorów
+     * @param to górny przedział kolorów
+     * @return wynik sprawdzenia
+     */
     private boolean fitsInRange(Canals canals, Canals from, Canals to) {
         return canals.red() >= from.red() && canals.red() <= to.red() &&
                 canals.blue() >= from.blue() && canals.blue() <= to.blue() &&
                 canals.green() >= from.green() && canals.green() <= to.green();
     }
 
+    /**
+     * Akcesor reprezentacji graficznej binarnej mapy
+     * @return obraz
+     */
     public Image map() {
         return new ImageConverter().toImage(map);
     }
 
+    /**
+     * Akcesor reprezentacji graficznej markerów
+     * @return obraz
+     */
     public Image markers() {
         return new ImageConverter().toImage(markers);
     }
 
+    /**
+     * Zwraca obraz wyjściowy z nałożoną mapą binarną obrazu
+     * @return obraz
+     */
     public Image result() {
         ImageConverter converter = new ImageConverter();
         ImageMap map = converter.toImageMap(inputImage);
@@ -109,6 +144,11 @@ public class RgbSegmentation {
         return converter.toImage(map);
     }
 
+    /**
+     * Zamienia pojedyńcze punkty w grupy (segmenty) o wielkości jeden.
+     * @param availablePoints wszystkie punkty
+     * @return wszystkie grupy
+     */
     private List<List<Tuple2<Integer, Integer>>> initialMarkerGroups(List<Tuple2<Integer, Integer>> availablePoints) {
         List<List<Tuple2<Integer, Integer>>> groups = new ArrayList<>();
         for (Tuple2<Integer, Integer> point : availablePoints) {
@@ -120,6 +160,11 @@ public class RgbSegmentation {
         return groups;
     }
 
+    /**
+     * Dla danej mapy binarnej obrazu, sprawdza które punkty są zapalone i zbiera je
+     * @param binaryImage mapa binarna obrazu
+     * @return lista zapalonych punktów
+     */
     private List<Tuple2<Integer, Integer>> availableMarkerPoints(ImageMap binaryImage) {
         List<Tuple2<Integer, Integer>> availablePoints = new ArrayList<>();
 
@@ -133,6 +178,12 @@ public class RgbSegmentation {
         return availablePoints;
     }
 
+    /**
+     * Dla danego punktu zbiera z mapy binarnej obrazu punkty sąsiednie, jeśli są zapalone
+     * @param point punkt sprawdzenia
+     * @param binaryMap mapa binarna obrazu
+     * @return lista zapalonych punktów sąsiednich
+     */
     private List<Tuple2<Integer, Integer>> availablePointNeighbourhood(Tuple2<Integer, Integer> point, ImageMap binaryMap) {
         List<Tuple2<Integer, Integer>> list = new ArrayList<>();
 
@@ -150,6 +201,10 @@ public class RgbSegmentation {
         return list;
     }
 
+    /**
+     * Akcesor liczby grup (segmentów)
+     * @return liczba grup (segmentów)
+     */
     public int numberOfGroups() {
         return this.numberOfGroups;
     }

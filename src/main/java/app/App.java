@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 
@@ -117,10 +118,8 @@ public class App extends Application {
         MenuItem openImageItem = new MenuItem("Otwórz");
 
         openImageItem.setOnAction(t -> {
-//            FileChooser fileChooser = new FileChooser(); //nocommit
-//            File file = fileChooser.showOpenDialog(null);
-            ClassLoader classLoader = getClass().getClassLoader(); // fast load
-            File file = new File(classLoader.getResource("img/1.tif").getFile());
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(null);
             try {
                 String extension = FilenameUtils.getExtension(file.getName());
                 if ("tif".equals(extension.toLowerCase())) {
