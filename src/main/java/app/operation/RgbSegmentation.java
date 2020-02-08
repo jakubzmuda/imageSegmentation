@@ -37,14 +37,17 @@ public class RgbSegmentation {
 
         List<List<Tuple2<Integer, Integer>>> groups = initialMarkerGroups(availablePoints);
 
-        outerLoop:
-        while (true) {
+        boolean anyNeighbourFound = true;
+
+        while (anyNeighbourFound) {
+            anyNeighbourFound = false;
+            innerLoop:
             for (List<Tuple2<Integer, Integer>> group : groups) {
                 for (Tuple2<Integer, Integer> point : group) {
                     for (Tuple2<Integer, Integer> potentialNewNeighbour : availablePointNeighbourhood(point, binaryMap)) {
                         // to nie czy w jakiejkolwiek innej liscie jest ten punkt, jesli tak to zmerdżuj listy
                         // czy nie jest juz w tej liscie
-                        boolean alreadyInThisGroup = group.stream().noneMatch(pt -> pt.equals(potentialNewNeighbour));
+                        boolean alreadyInThisGroup = group.stream().filter(pt -> pt.equals(potentialNewNeighbour)).count() == 1;
                         if (!alreadyInThisGroup) {
                             // znalezc grupe
                             // zmergowac grupe
@@ -52,12 +55,13 @@ public class RgbSegmentation {
                             List<Tuple2<Integer, Integer>> previousGroup = groups.stream().filter(grp -> grp.contains(potentialNewNeighbour)).findFirst().get();
                             group.addAll(previousGroup);
                             groups.remove(previousGroup);
-                            continue outerLoop;
+                            anyNeighbourFound = true;
+                            break innerLoop;
                         }
                     }
                 }
             }
-            break;
+            System.out.println("number of groups = " + groups.size());
         }
 
         System.out.println("Number of groups = " + groups.size());
@@ -137,8 +141,8 @@ public class RgbSegmentation {
                 if (i == 0 && j == 0) {
                     continue;
                 }
-                if (binaryMap.getCanalValueOrBlack(point._1 - i, point._2 - j).red() == 255) {
-                    list.add(new Tuple2<>(point._1 - i, point._2 - j));
+                if (binaryMap.getCanalValueOrBlack(point._1 + i, point._2 + j).red() == 255) {
+                    list.add(new Tuple2<>(point._1 + i, point._2 + j));
                 }
             }
         }
