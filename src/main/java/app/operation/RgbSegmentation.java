@@ -46,4 +46,8 @@ public class RgbSegmentation {
 
         return converter.toImage(map);
     }
+
+    public Image markers() {
+        return null;
+    }
 }

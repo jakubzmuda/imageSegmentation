@@ -29,6 +29,9 @@ public class RgbSegmentationWindow {
     private Image mapImage;
     private ImageView mapImageView;
 
+    private Image markersImage;
+    private ImageView markersImageView;
+
     private Image resultImage;
     private ImageView resultImageView;
 
@@ -58,7 +61,7 @@ public class RgbSegmentationWindow {
         VBox container = new VBox(configurationPanel, previewPanel, actionsPanel);
         container.setAlignment(Pos.CENTER);
 
-        Scene scene = new Scene(container, 800, 400);
+        Scene scene = new Scene(container, 1000, 600);
         stage.setScene(scene);
         stage.show();
     }
@@ -69,7 +72,9 @@ public class RgbSegmentationWindow {
             RgbSegmentation rgbSegmentation = new RgbSegmentation(inputImage, thresholdFrom(), thresholdTo());
             Image map = rgbSegmentation.map();
             Image result = rgbSegmentation.result();
+            Image markers = rgbSegmentation.markers();
             updateMap(map);
+            updateMarkersImage(markers);
             updateResultImage(result);
         });
 
@@ -100,16 +105,24 @@ public class RgbSegmentationWindow {
         resultImageView.setImage(resultImage);
     }
 
+    public void updateMarkersImage(Image newImage) {
+        markersImage = newImage;
+        markersImageView.setImage(markersImage);
+    }
+
     private HBox buildPreviewPanel() {
         inputImageView = new ImageView(inputImage);
 
         mapImage = BinaryImage.white(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
         mapImageView = new ImageView(mapImage);
 
+        markersImage = BinaryImage.white(Math.round(inputImage.getWidth()), Math.round(inputImage.getHeight())).asImage();
+        markersImageView = new ImageView(markersImage);
+
         resultImage = inputImage;
         resultImageView = new ImageView(resultImage);
 
-        HBox panel = new HBox(inputImageView, mapImageView, resultImageView);
+        HBox panel = new HBox(inputImageView, mapImageView, markersImageView, resultImageView);
         panel.setPadding(new Insets(16, 0, 16, 0));
         panel.setAlignment(Pos.CENTER);
         panel.setSpacing(16);
