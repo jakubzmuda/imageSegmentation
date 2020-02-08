@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Implementacja progowania i segmentacji w modelu RGB
+ */
 public class RgbSegmentation {
 
     /**

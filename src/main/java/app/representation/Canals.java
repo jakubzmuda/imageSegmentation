@@ -1,5 +1,8 @@
 package app.representation;
 
+/**
+ * Reprezentacja RGB piksela
+ */
 public class Canals {
     final int red;
     final int green;

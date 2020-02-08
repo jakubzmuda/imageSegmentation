@@ -5,9 +5,18 @@ import io.vavr.Function3;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Reprezentacja obrazu w postaci macierzy punktów i wartości
+ */
 public class ImageMap {
     private Map<Integer, Map<Integer, Canals>> map = new HashMap<>();
 
+    /**
+     * Nadpisywanie wartości koloru w danym punkcie
+     * @param x współrzędna x
+     * @param y współrzędna y
+     * @param canals wartość RGB w danym punkcie
+     */
     public void put(int x, int y, Canals canals) {
         Map<Integer, Canals> innerMap = map.get(x);
 
