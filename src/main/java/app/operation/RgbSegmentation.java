@@ -15,6 +15,7 @@ public class RgbSegmentation {
     private Image inputImage;
     private ImageMap map;
     private ImageMap markers;
+    private int numberOfGroups = 0;
 
     public RgbSegmentation(Image image, Canals from, Canals to) {
         this.inputImage = image;
@@ -45,13 +46,8 @@ public class RgbSegmentation {
             for (List<Tuple2<Integer, Integer>> group : groups) {
                 for (Tuple2<Integer, Integer> point : group) {
                     for (Tuple2<Integer, Integer> potentialNewNeighbour : availablePointNeighbourhood(point, binaryMap)) {
-                        // to nie czy w jakiejkolwiek innej liscie jest ten punkt, jesli tak to zmerdżuj listy
-                        // czy nie jest juz w tej liscie
                         boolean alreadyInThisGroup = group.stream().filter(pt -> pt.equals(potentialNewNeighbour)).count() == 1;
                         if (!alreadyInThisGroup) {
-                            // znalezc grupe
-                            // zmergowac grupe
-                            // usunac grupe
                             List<Tuple2<Integer, Integer>> previousGroup = groups.stream().filter(grp -> grp.contains(potentialNewNeighbour)).findFirst().get();
                             group.addAll(previousGroup);
                             groups.remove(previousGroup);
@@ -61,18 +57,17 @@ public class RgbSegmentation {
                     }
                 }
             }
-            System.out.println("number of groups = " + groups.size());
         }
 
-        System.out.println("Number of groups = " + groups.size());
+        this.numberOfGroups = groups.size();
 
         ImageMap markersMap = new ImageConverter().toImageMap(BinaryImage.black(binaryMap.width(), binaryMap.height()).asImage());
 
         for (List<Tuple2<Integer, Integer>> group : groups) {
+            int red = new Random().nextInt(255);
+            int green = new Random().nextInt(255);
+            int blue = new Random().nextInt(255);
             for (Tuple2<Integer, Integer> point : group) {
-                int red = new Random().nextInt(255);
-                int green = new Random().nextInt(255);
-                int blue = new Random().nextInt(255);
                 Canals canals = new Canals(red, green, blue);
                 markersMap.put(point._1, point._2, canals);
             }
@@ -148,5 +143,9 @@ public class RgbSegmentation {
         }
 
         return list;
+    }
+
+    public int numberOfGroups() {
+        return this.numberOfGroups;
     }
 }

@@ -44,6 +44,7 @@ public class RgbSegmentationWindow {
     private TextField blueMinField;
     private TextField blueMaxField;
 
+    private Label numberOfGroups;
 
     public RgbSegmentationWindow(App app, Image inputImage) {
         this.app = app;
@@ -56,9 +57,11 @@ public class RgbSegmentationWindow {
 
         GridPane configurationPanel = buildConfigurationPanel();
         HBox previewPanel = buildPreviewPanel();
+        numberOfGroups = new Label("Liczba grup: 0");
+        numberOfGroups.setMinHeight(30);
         HBox actionsPanel = buildActionsPanel();
 
-        VBox container = new VBox(configurationPanel, previewPanel, actionsPanel);
+        VBox container = new VBox(configurationPanel, previewPanel, numberOfGroups, actionsPanel);
         container.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(container, 1000, 600);
@@ -76,6 +79,7 @@ public class RgbSegmentationWindow {
             updateMap(map);
             updateMarkersImage(markers);
             updateResultImage(result);
+            this.numberOfGroups.setText("Liczba grup: " + rgbSegmentation.numberOfGroups());
         });
 
         Button cancelButton = new Button("Anuluj");
