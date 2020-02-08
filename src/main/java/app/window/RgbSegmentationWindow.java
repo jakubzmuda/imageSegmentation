@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -44,6 +45,7 @@ public class RgbSegmentationWindow {
     private TextField blueMinField;
     private TextField blueMaxField;
 
+    private CheckBox shouldGroup;
     private Label numberOfGroups;
 
     public RgbSegmentationWindow(App app, Image inputImage) {
@@ -57,11 +59,15 @@ public class RgbSegmentationWindow {
 
         GridPane configurationPanel = buildConfigurationPanel();
         HBox previewPanel = buildPreviewPanel();
-        numberOfGroups = new Label("Liczba grup: 0");
+
+        shouldGroup = new CheckBox("Segmentować?");
+        shouldGroup.setMinHeight(30);
+
+        numberOfGroups = new Label("Liczba wyodrębnionych segmentów: 0");
         numberOfGroups.setMinHeight(30);
         HBox actionsPanel = buildActionsPanel();
 
-        VBox container = new VBox(configurationPanel, previewPanel, numberOfGroups, actionsPanel);
+        VBox container = new VBox(configurationPanel, previewPanel, numberOfGroups, shouldGroup, actionsPanel);
         container.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(container, 1000, 600);
@@ -72,14 +78,14 @@ public class RgbSegmentationWindow {
     private HBox buildActionsPanel() {
         Button previewButton = new Button("Podgląd");
         previewButton.setOnAction((event) -> {
-            RgbSegmentation rgbSegmentation = new RgbSegmentation(inputImage, thresholdFrom(), thresholdTo());
+            RgbSegmentation rgbSegmentation = new RgbSegmentation(inputImage, thresholdFrom(), thresholdTo(), shouldGroup.isSelected());
             Image map = rgbSegmentation.map();
             Image result = rgbSegmentation.result();
             Image markers = rgbSegmentation.markers();
             updateMap(map);
             updateMarkersImage(markers);
             updateResultImage(result);
-            this.numberOfGroups.setText("Liczba grup: " + rgbSegmentation.numberOfGroups());
+            this.numberOfGroups.setText("Liczba wyodrębnionych segmentów: " + rgbSegmentation.numberOfGroups());
         });
 
         Button cancelButton = new Button("Anuluj");
@@ -89,8 +95,8 @@ public class RgbSegmentationWindow {
 
         Button applyButton = new Button("Potwierdź");
         applyButton.setOnAction((event) -> {
-           app.updateImage(resultImage);
-           stage.close();
+            app.updateImage(resultImage);
+            stage.close();
         });
 
         HBox container = new HBox(previewButton, cancelButton, applyButton);

@@ -17,7 +17,7 @@ public class RgbSegmentation {
     private ImageMap markers;
     private int numberOfGroups = 0;
 
-    public RgbSegmentation(Image image, Canals from, Canals to) {
+    public RgbSegmentation(Image image, Canals from, Canals to, boolean shouldGroup) {
         this.inputImage = image;
 
         ImageMap binaryMap = new ImageConverter().toImageMap(image);
@@ -30,7 +30,12 @@ public class RgbSegmentation {
 
         this.map = binaryMap;
 
-        this.prepareMarkers(binaryMap);
+        if(shouldGroup) {
+            this.prepareMarkers(binaryMap);
+        }
+        else {
+            this.markers = binaryMap;
+        }
     }
 
     private void prepareMarkers(ImageMap binaryMap) {
