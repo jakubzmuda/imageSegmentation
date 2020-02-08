@@ -124,20 +124,20 @@ public class RgbSegmentationWindow {
 
         Label redLabel = new Label("czerwony");
         redMinField = new TextField("0");
-        redMaxField = new TextField("255");
+        redMaxField = new TextField("150");
         container.add(redLabel, 0, 1);
         container.add(redMinField, 1, 1);
         container.add(redMaxField, 2, 1);
 
         Label greenLabel = new Label("zielony");
         greenMinField = new TextField("0");
-        greenMaxField = new TextField("255");
+        greenMaxField = new TextField("140");
         container.add(greenLabel, 0, 2);
         container.add(greenMinField, 1, 2);
         container.add(greenMaxField, 2, 2);
 
         Label blueLabel = new Label("niebieski");
-        blueMinField = new TextField("0");
+        blueMinField = new TextField("150");
         blueMaxField = new TextField("255");
         container.add(blueLabel, 0, 3);
         container.add(blueMinField, 1, 3);

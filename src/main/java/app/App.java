@@ -35,7 +35,7 @@ import java.io.IOException;
 public class App extends Application {
 
     private static int appWidth = 600;
-    private static int appHeight = 300;
+    private static int appHeight = 400;
     private static long imageContainerWidth = Math.round(appWidth);
 
     private Image image;
